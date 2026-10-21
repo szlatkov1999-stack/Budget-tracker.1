@@ -27,6 +27,13 @@ def veri_kaydet(islemler):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(islemler, f, ensure_ascii=False, indent=2)
 
+# Açılır menülerin ekranı kaplamasını engelleyen özel Spinner
+class CustomSpinner(Spinner):
+    def open_dropdown(self, *args):
+        if self._dropdown:
+            self._dropdown.max_height = Window.height * 0.5  # Ekranın yarısını geçmesin
+        super().open_dropdown(*args)
+
 class ButceApp(App):
     def build(self):
         self.title = "Gelir-Gider Takip"
@@ -41,9 +48,11 @@ class ButceApp(App):
         # --- ORTA BÖLÜM: EKLEME FORMU ---
         form = BoxLayout(orientation="vertical", size_hint=(1, 0.45), spacing=8)
         
-        self.tur_spinner = Spinner(text="Gider", values=("Gelir", "Gider"), size_hint=(1, 0.2))
+        # Spinner'ları CustomSpinner ile değiştirdik
+        self.tur_spinner = CustomSpinner(text="Gider", values=("Gelir", "Gider"), size_hint=(1, 0.2))
         self.tutar_input = TextInput(hint_text="Tutar (örn: 150.50)", input_filter="float", multiline=False, size_hint=(1, 0.2))
-        self.kategori_spinner = Spinner(text="Kategori", values=("Market", "Kira", "Fatura", "Ulaşım", "Maaş", "Ek Gelir", "Diğer"), size_hint=(1, 0.2))
+        self.kategori_spinner = CustomSpinner(text="Kategori", values=("Market", "Kira", "Fatura", "Ulaşım", "Maaş", "Ek Gelir", "Diğer"), size_hint=(1, 0.2))
+        
         btn_kaydet = Button(text="KAYDET", size_hint=(1, 0.2), background_color=(0.2, 0.7, 0.3, 1), bold=True)
         btn_kaydet.bind(on_press=self.kaydet)
         
@@ -109,7 +118,7 @@ class ButceApp(App):
             btn_sil.bind(on_press=lambda x, idx=gercek_idx: self.sil(idx))
             
             satir.add_widget(lbl)
-            satir.add_widget(tutar_lbl)
+            satir.add_widget(tutar_x)
             satir.add_widget(btn_sil)
             self.liste_kutu.add_widget(satir)
 
