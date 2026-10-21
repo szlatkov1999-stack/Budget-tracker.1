@@ -16,8 +16,12 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip build-essential git zip unzip openjdk-17-jdk libffi-dev libssl-dev
-          pip3 install --upgrade buildozer cython virtualenv
+          sudo apt-get install -y aidl python3-pip build-essential git zip unzip openjdk-17-jdk libffi-dev libssl-dev zlib1g-dev libltdl-dev libncurses5-dev libncursesw5-dev libsqlite3-dev
+          pip3 install --upgrade buildozer "cython<3.0" virtualenv
+
+      - name: Clean previous builds
+        run: |
+          rm -rf .buildozer
 
       - name: Build with Buildozer
         run: |
